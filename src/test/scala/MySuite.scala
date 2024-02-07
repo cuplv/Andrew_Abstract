@@ -24,4 +24,23 @@ class MySuite extends munit.FunSuite {
     val expected = "Hello, World"
     assertEquals(obtained, expected)
   }
+
+  test("true+false") {
+    val test = Addition(Bool(true), Bool(false));
+    println(test.toString)
+    val obtained = test.evaluate()
+    val expected = true
+    assertEquals(obtained, expected)
+  }
+
+  test("If(true){1}else{0}") {
+    val test = If_Statement(Bool(true), Number(1), Number(0));
+    println(test.toString)
+    val obtained = test.evaluate()
+    val expected = 1
+    assertEquals(obtained, expected)
+  }
+
+  //can't test a while loop without having modifiable variables
+  //because otherwise it does nothing or it goes forever
 }

@@ -1,11 +1,14 @@
 class Addition(var a: Expression, var b: Expression) extends Expression:
-  override def evaluate(): Any =
+  override def evaluate(): Int | String | scala.Boolean =
     val aval = a.evaluate()
     val bval = b.evaluate()
+    
     if aval.isInstanceOf[Int] && bval.isInstanceOf[Int] then
       aval.asInstanceOf[Int] + bval.asInstanceOf[Int]
     else if aval.isInstanceOf[String] && bval.isInstanceOf[String] then
       aval.asInstanceOf[String] + bval.asInstanceOf[String]
+    else if aval.isInstanceOf[scala.Boolean] && bval.isInstanceOf[scala.Boolean] then
+      aval.asInstanceOf[scala.Boolean] || bval.asInstanceOf[scala.Boolean]
     else
       throw new Exception(
         "Cannot add " + aval.toString() + " and " + bval.toString()
