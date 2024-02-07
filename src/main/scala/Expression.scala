@@ -10,7 +10,7 @@ case class Infinity(neg: Boolean):
   def *(num:Int): Infinity = if num <0 then Infinity(!neg) else this
 
 case class Interval(low: Int|Infinity, lowInc: Boolean, high: Int|Infinity, highInc: Boolean):
-  override def toString(): String = (if lowInc then "[" else "(") + low.toString() + ", " + high.toString() + (if lowInc then "]" else ")")
+  override def toString(): String = (if lowInc then "[" else "(") + low.toString() + ", " + high.toString() + (if highInc then "]" else ")")
   
   def *(num:Int): Interval =
     if num <0 then
@@ -50,7 +50,7 @@ case class Interval(low: Int|Infinity, lowInc: Boolean, high: Int|Infinity, high
     this + other * -1
 
 case class Rand() extends Expression:
-  override def evaluate(): Int = scala.util.Random.nextInt(Int.MaxValue)//warning this could overflow in some cases
+  override def evaluate(): Int = scala.util.Random.nextInt(Int.MaxValue)
   override def abstract_evaluate(): Interval = Interval(0, true, Infinity(false), false)
   override def toString(): String = "Rand()"
 
