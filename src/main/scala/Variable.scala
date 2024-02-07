@@ -1,5 +1,6 @@
 class Variable(var value: Number|MyString|Bool) extends Expression {
   override def evaluate(): Int|String|scala.Boolean = value.evaluate()
+  override def abstract_evaluate(): Interval = Interval(Infinity(true), false, Infinity(false), false)
 
   //choose not to statically type variable types
   def update(newValue: Number|MyString|Bool): Unit = value = newValue
