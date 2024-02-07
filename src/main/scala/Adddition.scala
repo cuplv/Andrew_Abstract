@@ -1,5 +1,5 @@
 class Addition(var a: Expression, var b: Expression, val sub: Boolean = false) extends Expression:
-  override def evaluate(): Int | String | scala.Boolean =
+  override def evaluate(): Int | String | scala.Boolean=
     val aval = a.evaluate()
     val bval = b.evaluate()
     
@@ -29,13 +29,13 @@ class Addition(var a: Expression, var b: Expression, val sub: Boolean = false) e
 
   end evaluate
 
-  override def abstract_evaluate(): Interval = 
+  override def abstract_evaluate(): Interval= 
     val aval = a.abstract_evaluate()
     val bval = b.abstract_evaluate()
     if sub then
-      aval - bval
+      aval - bval //warning this could overflow in some cases
     else
-    aval+bval
+      aval+bval//warning this could overflow in some cases
 
   override def toString: String = {
     "Addition(" + a.toString() + ", " + b.toString() + (if !sub then ")" else (", sub: " + sub.toString() + ")"))
