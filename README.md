@@ -2,7 +2,9 @@
 
 This project is an attempt to learn static analysis and abstract interpretation from the ground up.
 
-Author: Andrew Fox
+Andrew Fox
+
+Spring 2024
 
 ## Usage
 
@@ -20,3 +22,12 @@ Week 2(logic branch):
 
 - Added if statments, booleans
 - Started adding in structure for variables and while loops
+
+Week 3:
+
+- Added in simple implementation for subtraction(with `Number`s only)
+- added in abstract_evaluate nodes: these will report the interval of a given expression, for now only really functional with `Number`'s
+- added in `Rand`
+- started thinking about direction of project and other cases that could happen
+- thought about combination of the evaluate and abstract_evaluate
+  - My thought process is same function but as its parameters its taking a bool that says if it is abstract or not, however this seems too simple

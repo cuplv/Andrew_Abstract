@@ -1,7 +1,7 @@
 // For more information on writing tests, see
 // https://scalameta.org/munit/docs/getting-started.html
 class MySuite extends munit.FunSuite {
-  test("1+1") {
+  /* test("1+1") {
     val test = Addition(Number(1), Number(1));
     println(test.toString)
     val obtained = test.evaluate()
@@ -38,6 +38,62 @@ class MySuite extends munit.FunSuite {
     println(test.toString)
     val obtained = test.evaluate()
     val expected = 1
+    assertEquals(obtained, expected)
+  } */
+
+  test("Abstract analysis of 1+1") {
+    val test = Addition(Number(1), Number(1));
+    println("Expression: "+ test.toString)
+    println("Interval Result: "+test.abstract_evaluate())
+    println("Concrete Result: "+test.evaluate())
+    println("--------------------")
+    val obtained = test.abstract_evaluate()
+    val expected = Interval(2, true, 2, true)
+    assertEquals(obtained, expected)
+  }
+
+  test("Abstract analysis of Rand()") {
+    val test = Rand();
+    println("Expression: "+ test.toString)
+    println("Interval Result: "+test.abstract_evaluate())
+    println("Concrete Result: "+test.evaluate())
+    println("--------------------")
+
+    val obtained = test.abstract_evaluate()
+    val expected = Interval(0, true, Infinity(false), false)
+    assertEquals(obtained, expected)
+  }
+
+  test("Abstract analysis of Rand()+1") {
+    val test = Addition(Rand(), Number(1));
+    println("Expression: "+ test.toString)
+    println("Interval Result: "+test.abstract_evaluate())
+    println("Concrete Result: "+test.evaluate())
+    println("--------------------")
+
+    val obtained = test.abstract_evaluate()
+    val expected = Interval(1, true, Infinity(false), false)
+    assertEquals(obtained, expected)
+  }
+
+  test("Abstract analysis of Rand()+Rand()") {
+    val test = Addition(Rand(), Rand());
+    println("Expression: "+ test.toString)
+    println("Interval Result: "+test.abstract_evaluate())
+    println("Concrete Result: "+test.evaluate())
+    println("--------------------")
+    val obtained = test.abstract_evaluate()
+    val expected = Interval(0, true, Infinity(false), false)
+    assertEquals(obtained, expected)
+  }
+
+  test("Abstract analysis of Rand()-Rand()") {
+    val test = Addition(Rand(), Rand(),sub = true);
+    println("Expression: "+ test.toString)
+    println("Interval Result: "+test.abstract_evaluate())
+    println("Concrete Result: "+test.evaluate())
+    val obtained = test.abstract_evaluate()
+    val expected = Interval(Infinity(true), false, Infinity(false), false)
     assertEquals(obtained, expected)
   }
 
