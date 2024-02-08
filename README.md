@@ -25,9 +25,11 @@ Week 2(logic branch):
 
 Week 3:
 
-- Added in simple implementation for subtraction(with `Number`s only)
-- added in abstract_evaluate nodes: these will report the interval of a given expression, for now only really functional with `Number`'s
+- Added in simple implementation for subtraction(with `Number` and `Point` only)
+- added in abstract_evaluate nodes: these will report the interval of a given expression, for now only really functional with `Number` and `Point`
 - added in `Rand`
 - started thinking about direction of project and other cases that could happen
 - thought about combination of the evaluate and abstract_evaluate
   - My thought process is same function but as its parameters its taking a bool that says if it is abstract or not, however this seems too simple
+- Added in `Multiplication` which supports `Number`x`Number` and `Point`x`Number`
+- Added in `Point` class, alongside support for abstraction(the `TwoDInterval` class)

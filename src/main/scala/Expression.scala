@@ -1,7 +1,7 @@
 import scala.quoted.Expr
 trait Expression:
-  def evaluate(): Int | String | scala.Boolean
-  def abstract_evaluate(): Interval
+  def evaluate(): Int | String | scala.Boolean | Point
+  def abstract_evaluate(): Interval | TwoDInterval
 end Expression
 
 
@@ -12,18 +12,43 @@ case class Infinity(neg: Boolean):
 case class Interval(low: Int|Infinity, lowInc: Boolean, high: Int|Infinity, highInc: Boolean):
   override def toString(): String = (if lowInc then "[" else "(") + low.toString() + ", " + high.toString() + (if highInc then "]" else ")")
   
-  def *(num:Int): Interval =
-    if num <0 then
+  def *(num:Int): Interval = 
+    if(num ==0) {
+      throw new Exception("Multiplying Interval by 0 is not allowed")
+    }
       Interval(high match{
-        case h: Int => h* -1
-        case h: Infinity => h * -1
+        case h: Int => h* num
+        case h: Infinity => h * (num/(num.abs))
       }, highInc, low match{
-        case l: Int => l* -1
-        case l: Infinity => l * -1
+        case l: Int => l* num
+        case l: Infinity => l * (num/(num.abs))
       }, lowInc)
-    else
-      this
   
+  def *(other: Interval): Interval = 
+    var low = this.low
+    var high = this.high
+    var lowInc = this.lowInc
+    var highInc = this.highInc
+    //lower bound
+    if(this.low.isInstanceOf[Infinity] || other.low.isInstanceOf[Infinity]){
+      low = Infinity(true)
+      lowInc = false
+    } else {
+      low = this.low.asInstanceOf[Int] * other.low.asInstanceOf[Int]
+      lowInc = this.lowInc && other.lowInc
+    }
+
+    //upper bound
+    if(this.high.isInstanceOf[Infinity] || other.high.isInstanceOf[Infinity]){
+      high = Infinity(false)
+      highInc = false
+    } else {
+      high = this.high.asInstanceOf[Int] * other.high.asInstanceOf[Int]
+      highInc = this.highInc && other.highInc
+    }
+
+    Interval(low, lowInc, high, highInc)
+
   def +(other: Interval): Interval =
     var min = this.low
     var max = this.high
@@ -33,7 +58,7 @@ case class Interval(low: Int|Infinity, lowInc: Boolean, high: Int|Infinity, high
       minInc = false
     else
       min = this.low.asInstanceOf[Int] + other.low.asInstanceOf[Int]
-      minInc = this.lowInc || other.lowInc
+      minInc = this.lowInc && other.lowInc
     end if
 
     if(this.high.isInstanceOf[Infinity] || other.high.isInstanceOf[Infinity]) then
@@ -41,13 +66,22 @@ case class Interval(low: Int|Infinity, lowInc: Boolean, high: Int|Infinity, high
       maxInc = false
     else
       max = this.high.asInstanceOf[Int] + other.high.asInstanceOf[Int]
-      maxInc = this.highInc || other.highInc
+      maxInc = this.highInc && other.highInc
     end if
 
     Interval(min, minInc, max, maxInc)
 
   def -(other: Interval): Interval =
     this + other * -1
+
+case class TwoDInterval(x: Interval, y: Interval):
+  override def toString(): String = "(" + x.toString() + ", " + y.toString() + ")"
+  def +(other: TwoDInterval): TwoDInterval = TwoDInterval(x + other.x, y + other.y)
+  def -(other: TwoDInterval): TwoDInterval = TwoDInterval(x - other.x, y - other.y)
+  def *(other: Interval): TwoDInterval = TwoDInterval(x * other, y * other)
+  def *(num: Int): TwoDInterval = TwoDInterval(x * num, y * num)
+
+
 
 case class Rand() extends Expression:
   override def evaluate(): Int = scala.util.Random.nextInt(Int.MaxValue)
