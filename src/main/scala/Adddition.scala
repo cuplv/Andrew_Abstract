@@ -1,23 +1,27 @@
-class Addition(var a: Expression, var b: Expression, val sub: Boolean = false) extends Expression:
-  override def evaluate(): Int | String | scala.Boolean | Point=
+class Addition(var a: Expression, var b: Expression, val sub: Boolean = false)
+    extends Expression:
+  override def evaluate(state: State): Int | String | scala.Boolean | Point =
 
-    if(a.isInstanceOf[Point]&& b.isInstanceOf[Point]){
-      if(sub) then return (a.asInstanceOf[Point]-b.asInstanceOf[Point]).evaluate()
-      else return (a.asInstanceOf[Point]+b.asInstanceOf[Point]).evaluate()
+    if (a.isInstanceOf[Point] && b.isInstanceOf[Point]) {
+      if (sub) then
+        return (a.asInstanceOf[Point] - b.asInstanceOf[Point]).evaluate(state)
+      else
+        return (a.asInstanceOf[Point] + b.asInstanceOf[Point]).evaluate(state)
     }
-    val aval = a.evaluate()
-    val bval = b.evaluate()
-    
-    (aval, bval, sub) match{
-      case (a:Int, b:Int, false) => a+b
-      case (a:Int, b:Int, true) => a-b
-      case (a:String, b:String, _) => a+b
-      case (a:Boolean, b:Boolean, _) => a || b
-      case (a:Point, b:Point, true) => (a-b).evaluate()
-      case (a:Point, b:Point, false) => (a+b).evaluate()
-      case _ => throw new Exception(
-        "Cannot add " + a.toString() + " and " + b.toString()
-      )
+    val aval = a.evaluate(state)
+    val bval = b.evaluate(state)
+
+    (aval, bval, sub) match {
+      case (a: Int, b: Int, false)     => a + b
+      case (a: Int, b: Int, true)      => a - b
+      case (a: String, b: String, _)   => a + b
+      case (a: Boolean, b: Boolean, _) => a || b
+      case (a: Point, b: Point, true)  => (a - b).evaluate(state)
+      case (a: Point, b: Point, false) => (a + b).evaluate(state)
+      case _ =>
+        throw new Exception(
+          "Cannot add " + a.toString() + " and " + b.toString()
+        )
     }
     /* if aval.isInstanceOf[Int] && bval.isInstanceOf[Int] then
       if sub then
@@ -36,17 +40,22 @@ class Addition(var a: Expression, var b: Expression, val sub: Boolean = false) e
 
   end evaluate
 
-  override def abstract_evaluate(): Interval|TwoDInterval= 
-    val aval = a.abstract_evaluate()
-    val bval = b.abstract_evaluate()
-    (aval, bval) match{
-      case (a: Interval, b:Interval) => if sub then a-b else a+b
-      case (a: TwoDInterval, b:TwoDInterval) => if sub then a-b else a+b
-      case _ => throw new Exception(
-        "Cannot add " + aval.toString() + " and " + bval.toString()
-      )
+  override def abstract_evaluate(state: State): Interval | TwoDInterval =
+    val aval = a.abstract_evaluate(state)
+    val bval = b.abstract_evaluate(state)
+    (aval, bval) match {
+      case (a: Interval, b: Interval)         => if sub then a - b else a + b
+      case (a: TwoDInterval, b: TwoDInterval) => if sub then a - b else a + b
+      case _ =>
+        throw new Exception(
+          "Cannot add " + aval.toString() + " and " + bval.toString()
+        )
     }
 
   override def toString: String = {
-    "Addition(" + a.toString() + ", " + b.toString() + (if !sub then ")" else (", sub: " + sub.toString() + ")"))
+    "Addition(" + a.toString() + ", " + b.toString() + (if !sub then ")"
+                                                        else
+                                                          (", sub: " + sub
+                                                            .toString() + ")"
+                                                        ))
   }

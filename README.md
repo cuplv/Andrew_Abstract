@@ -33,3 +33,9 @@ Week 3:
   - My thought process is same function but as its parameters its taking a bool that says if it is abstract or not, however this seems too simple
 - Added in `Multiplication` which supports `Number`x`Number` and `Point`x`Number`
 - Added in `Point` class, alongside support for abstraction(the `TwoDInterval` class)
+
+Week 4:
+
+- Added in State and functionality for it so I can track variables across multiple expression calls.
+- Added in real functionality for while loops which now can run
+- Started abstract interpretation for a loop(picking up each additional state per pass through the loop and merging them together)

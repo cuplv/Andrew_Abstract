@@ -332,4 +332,149 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   } */
 
+  // Variable Assignment tests
+  /* test("Variable assignment: x=1") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Number(1), state)
+    val obtained = test.evaluate(state)
+    val expected = 1
+    assertEquals(obtained, expected)
+
+  }
+
+  test("Variable assignment: x=2") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Number(1), state)
+    test.assign(Number(2), state)
+    val obtained = test.evaluate(state)
+    val expected = 2
+    assertEquals(obtained, expected)
+  }
+
+  test("Variable assignment: x=1+1") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Addition(Number(1), Number(1)), state)
+    val obtained = test.evaluate(state)
+    val expected = 2
+    assertEquals(obtained, expected)
+  }
+
+  test("Variable assignment: x=1+1, y=x") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Addition(Number(1), Number(1)), state)
+    var test2 = Variable("y")
+    test2.assign(Variable("x"), state)
+    val obtained = test2.evaluate(state)
+    val expected = 2
+    assertEquals(obtained, expected)
+  } */
+
+  /*  test("x=1; x=x+1") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Number(1), state)
+    test.addAssign(Number(1), state)
+    val obtained = test.evaluate(state)
+    val expected = 2
+    assertEquals(obtained, expected)
+  } */
+
+  /* // Variable abstract analysis tests
+  test("x=1") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Number(1), state)
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(1, true, 1, true)
+    assertEquals(obtained, expected)
+  }
+
+  test("x=Rand()") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Rand(), state)
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(0, true, Infinity(false), false)
+    assertEquals(obtained, expected)
+  }
+
+  test("x=5; x=x+5") {
+    var state = State()
+    var test = Variable("x")
+    test.assign(Number(5), state)
+    test.assign(Addition(Variable("x"), Number(5)), state)
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(10, true, 10, true)
+    assertEquals(obtained, expected)
+  } */
+
+  // While statement tests
+  /* test("While(x<1){x+=1}") {
+    var state = State()
+    Variable("x").assign(Number(0), state)
+    val body = (s: State) => {
+      // println("I got called!")
+      Variable("x").addAssign(Number(1), s)
+    }
+    var test = While_Statement(
+      LessThan(Variable("x"), Number(1)),
+      body
+    )
+    val obtained = Variable("x").evaluate(state)
+    val expected = 1
+    assertEquals(obtained, expected)
+  } */
+
+  test("x,y=0;While(x<5){x+=1;y+=2}") {
+    var state = State()
+    Variable("x").assign(Number(0), state)
+    Variable("y").assign(Number(0), state)
+    val body = (s: State) => {
+      println(s.intervals)
+      Variable("x").addAssign(Number(1), s)
+      Variable("y").addAssign(Number(2), s)
+    }
+    var test = While_Statement(
+      LessThan(Variable("x"), Number(5)),
+      body
+    )
+    test.evaluate(state) // actually runs the loop
+    // flaw in the code, to pick up all of my abstract states I need to concretely run the loop
+    // will probably fix with While.abstract_evaluate() when I implement
+    val obtained = state.intervals
+    println(state.variables)
+    val expected =
+      collection.mutable.Map[String, Interval | TwoDInterval](
+        "x" -> Interval(0, true, 5, true),
+        "y" -> Interval(0, true, 10, true)
+      )
+    assertEquals(obtained, expected)
+  }
+
+  // Interval union tests
+  /* test("Interval union of (1,2] and [3,4]") {
+    val test = Interval(1, false, 2, true) union Interval(3, true, 4, true)
+    println(test.toString)
+    val obtained = test
+    val expected = Interval(1, false, 4, true)
+    assertEquals(obtained, expected)
+  }
+
+  test("Interval union of (1,Infinity) and [3,4]") {
+    val test =
+      Interval(1, false, Infinity(false), false) union Interval(
+        3,
+        true,
+        4,
+        true
+      )
+    println(test.toString)
+    val obtained = test
+    val expected = Interval(1, false, Infinity(false), false)
+    assertEquals(obtained, expected)
+  } */
 }
