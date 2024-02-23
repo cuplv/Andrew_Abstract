@@ -41,6 +41,7 @@ case class Variable(identifier: String) extends Expression {
     else throw new Exception("Variable not intialized")
 
   override def toString: String = "Variable(" + identifier.toString + ")";
+
 }
 
 //assignment currently can't handle holding itself, would need

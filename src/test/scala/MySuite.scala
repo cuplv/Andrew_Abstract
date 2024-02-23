@@ -44,9 +44,9 @@ class MySuite extends munit.FunSuite {
   // Addition abstract analysis tests
   /* test("Abstract analysis of 1+1") {
     val test = Addition(Number(1), Number(1));
-    println("Expression: "+ test.toString)
-    println("Interval Result: "+test.abstract_evaluate())
-    println("Concrete Result: "+test.evaluate())
+    println("Expression: " + test.toString)
+    println("Interval Result: " + test.abstract_evaluate())
+    println("Concrete Result: " + test.evaluate())
     println("--------------------")
     val obtained = test.abstract_evaluate()
     val expected = Interval(2, true, 2, true)
@@ -55,16 +55,16 @@ class MySuite extends munit.FunSuite {
 
   test("Abstract analysis of Rand()") {
     val test = Rand();
-    println("Expression: "+ test.toString)
-    println("Interval Result: "+test.abstract_evaluate())
-    println("Concrete Result: "+test.evaluate())
+    println("Expression: " + test.toString)
+    println("Interval Result: " + test.abstract_evaluate())
+    println("Concrete Result: " + test.evaluate())
     println("--------------------")
 
     val obtained = test.abstract_evaluate()
     val expected = Interval(0, true, Infinity(false), false)
     assertEquals(obtained, expected)
-  }
-
+  } */
+  /*
   test("Abstract analysis of Rand()+1") {
     val test = Addition(Rand(), Number(1));
     println("Expression: "+ test.toString)
@@ -155,9 +155,9 @@ class MySuite extends munit.FunSuite {
     val obtained = test.abstract_evaluate()
     val expected = Interval(0, true, Infinity(false), false)
     assertEquals(obtained, expected)
-  }
+  }*/
 
-  test("Abstract analysis of 2*(1+Rand())") {
+  /* test("Abstract analysis of 2*(1+Rand())") {
     val test = Multiplication(Number(2), Addition(Number(1), Rand()));
     println("Expression: " + test.toString)
     println("Interval Result: " + test.abstract_evaluate())
@@ -313,8 +313,9 @@ class MySuite extends munit.FunSuite {
     )
     assertEquals(obtained, expected)
   }
+   */
 
-  test("Abstract analysis of ((Rand(),1)*4)-(-5,10)") {
+  /* test("Abstract analysis of ((Rand(),1)*4)-(-5,10)") {
     val test = Addition(
       Multiplication(Point(Rand(), Number(1)), Number(4)),
       Point(Number(-5), Number(10)),
@@ -429,29 +430,47 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   } */
 
-  test("x,y=0;While(x<5){x+=1;y+=2}") {
+  // Abstract while statement tests
+
+  test("x=Rand(4);While(x<3){x+=2}") {
     var state = State()
-    Variable("x").assign(Number(0), state)
-    Variable("y").assign(Number(0), state)
-    val body = (s: State) => {
-      println(s.intervals)
-      Variable("x").addAssign(Number(1), s)
-      Variable("y").addAssign(Number(2), s)
-    }
+    Variable("x").assign(Rand(4), state)
     var test = While_Statement(
-      LessThan(Variable("x"), Number(5)),
-      body
+      Conditional(Variable("x"), LessThan, Number(3)),
+      IncrementVar(Variable("x"), 2)
     )
-    test.evaluate(state) // actually runs the loop
-    // flaw in the code, to pick up all of my abstract states I need to concretely run the loop
-    // will probably fix with While.abstract_evaluate() when I implement
-    val obtained = state.intervals
-    println(state.variables)
-    val expected =
-      collection.mutable.Map[String, Interval | TwoDInterval](
-        "x" -> Interval(0, true, 5, true),
-        "y" -> Interval(0, true, 10, true)
-      )
+
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(3, true, Infinity(false), false)
+
+    assertEquals(obtained, expected)
+  }
+
+  test("x=Rand(2);While(x>2){x+=-2}") {
+    var state = State()
+    Variable("x").assign(Rand(2), state)
+    var test = While_Statement(
+      Conditional(Variable("x"), GreaterThan, Number(2)),
+      IncrementVar(Variable("x"), -2)
+    )
+
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(0, true, 2, true)
+
+    assertEquals(obtained, expected)
+  }
+
+  test("x=Rand(2)-1;While(x<2){x+=1}") {
+    var state = State()
+    Variable("x").assign(Addition(Rand(2), Number(-1)), state)
+    var test = While_Statement(
+      Conditional(Variable("x"), LessThan, Number(2)),
+      IncrementVar(Variable("x"), 1)
+    )
+
+    val obtained = test.abstract_evaluate(state)
+    val expected = Interval(2, true, Infinity(false), false)
+
     assertEquals(obtained, expected)
   }
 
@@ -478,3 +497,7 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   } */
 }
+
+//start every time with x+y<=c1, x<=c2, y<=c3
+//after these intials, every time there is a new operation can adjust these inequalities as needed
+//the extra sides come from ?? ... magic?

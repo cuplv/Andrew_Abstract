@@ -6,6 +6,12 @@ end Expression
 case class Infinity(neg: Boolean):
   override def toString(): String = if neg then "-Infinity" else "Infinity"
   def *(num: Int): Infinity = if num < 0 then Infinity(!neg) else this
+  def <(num: Int): Boolean = if neg then true else false
+  def >(num: Int): Boolean = if neg then false else true
+  def >(num: Infinity): Boolean = if neg then false else true
+  def <(num: Infinity): Boolean = if neg then true else false
+  def ==(num: Infinity): Boolean = neg == num.neg
+  def ==(num: Int): Boolean = false
 
 case class Interval(
     low: Int | Infinity,
@@ -124,9 +130,18 @@ case class Interval(
     end if
 
     Interval(min, minInc, max, maxInc)
-
+  def +(other: Int): Interval =
+    this + Interval(other, true, other, true)
   def -(other: Interval): Interval =
     this + other * -1
+
+class Bottom() extends Interval(0, false, 0, false):
+  override def toString(): String = "\u22A5"
+  override def *(num: Int): Interval = this
+  override def *(other: Interval): Interval = this
+  override def union(other: Interval): Interval = other
+  override def +(other: Interval): Interval = this
+  override def -(other: Interval): Interval = this
 
 case class TwoDInterval(x: Interval, y: Interval):
   override def toString(): String =
@@ -140,11 +155,17 @@ case class TwoDInterval(x: Interval, y: Interval):
   def *(other: Interval): TwoDInterval = TwoDInterval(x * other, y * other)
   def *(num: Int): TwoDInterval = TwoDInterval(x * num, y * num)
 
-case class Rand() extends Expression:
+  // TODO allow input for rand so it can be within a range
+case class Rand(max: Int = Int.MaxValue) extends Expression:
   override def evaluate(state: State): Int =
-    scala.util.Random.nextInt(Int.MaxValue)
+    scala.util.Random.nextInt(max)
   override def abstract_evaluate(state: State): Interval =
-    Interval(0, true, Infinity(false), false)
+    Interval(
+      0,
+      true,
+      if max == Int.MaxValue then Infinity(false) else max,
+      if max == Int.MaxValue then false else true
+    )
   override def toString(): String = "Rand()"
 
 //think about potential uses/extensions
@@ -160,3 +181,42 @@ case class Rand() extends Expression:
 //interaction of two states?
 
 //should add in more operations/expressions like if, while. these should help with non determinism
+
+// type IntOrInfinity = Int | Infinity
+//extension to allow comparison operators on Int | Infinity
+extension (x: Int | Infinity)
+  def <(y: Int | Infinity): Boolean = (x, y) match {
+    case (x: Infinity, y: Infinity) => x < y
+    case (x: Int, y: Int)           => x < y
+    case (x: Infinity, y: Int)      => x < y
+    case (x: Int, y: Infinity)      => x < y
+    case _                          => false // should be unreachable
+  }
+  def >(y: Int | Infinity): Boolean = (x, y) match {
+    case (x: Infinity, y: Infinity) => x > y
+    case (x: Int, y: Int)           => x > y
+    case (x: Infinity, y: Int)      => x > y
+    case (x: Int, y: Infinity)      => x > y
+    case _                          => false // should be unreachable
+  }
+  def ==(y: Int | Infinity): Boolean = (x, y) match {
+    case (x: Infinity, y: Infinity) => x == y
+    case (x: Int, y: Int)           => x == y
+    case (x: Infinity, y: Int)      => false
+    case (x: Int, y: Infinity)      => false
+    case _                          => false // should be unreachable
+  }
+  def <=(y: Int | Infinity): Boolean = (x, y) match {
+    case (x: Infinity, y: Infinity) => x < y
+    case (x: Int, y: Int)           => x <= y
+    case (x: Infinity, y: Int)      => x < y
+    case (x: Int, y: Infinity)      => x < y
+    case _                          => false // should be unreachable
+  }
+  def >=(y: Int | Infinity): Boolean = (x, y) match {
+    case (x: Infinity, y: Infinity) => x > y
+    case (x: Int, y: Int)           => x >= y
+    case (x: Infinity, y: Int)      => x > y
+    case (x: Int, y: Infinity)      => x > y
+    case _                          => false // should be unreachable
+  }
