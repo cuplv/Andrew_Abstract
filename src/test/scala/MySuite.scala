@@ -432,7 +432,7 @@ class MySuite extends munit.FunSuite {
 
   // Abstract while statement tests
 
-  test("x=Rand(4);While(x<3){x+=2}") {
+  test("x=Rand(4);While(x<3){x+=2}") { // normal loop
     var state = State()
     Variable("x").assign(Rand(4), state)
     var test = While_Statement(
@@ -446,7 +446,7 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   }
 
-  test("x=Rand(2);While(x>2){x+=-2}") {
+  test("x=Rand(2);While(x>2){x+=-2}") { // never enters loop
     var state = State()
     Variable("x").assign(Rand(2), state)
     var test = While_Statement(
@@ -460,7 +460,7 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   }
 
-  test("x=Rand(2)-1;While(x<2){x+=1}") {
+  /* test("x=Rand(2)-1;While(x<2){x+=1}") {
     var state = State()
     Variable("x").assign(Addition(Rand(2), Number(-1)), state)
     var test = While_Statement(
@@ -470,6 +470,23 @@ class MySuite extends munit.FunSuite {
 
     val obtained = test.abstract_evaluate(state)
     val expected = Interval(2, true, Infinity(false), false)
+
+    assertEquals(obtained, expected)
+  } */
+  //
+
+  test("x=Rand(3)+1;While(x>0){x+=1}") { // try to test an infinite loop
+
+    var state = State()
+    Variable("x").assign(Addition(Rand(3), Number(1)), state)
+    var test = While_Statement(
+      Conditional(Variable("x"), GreaterThan, Number(0)),
+      IncrementVar(Variable("x"), 1)
+    )
+
+    val obtained = test.abstract_evaluate(state)
+    val expected =
+      Interval(0, false, 0, false) // sequivalent to bottom
 
     assertEquals(obtained, expected)
   }

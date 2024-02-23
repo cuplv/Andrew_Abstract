@@ -75,7 +75,15 @@ class While_Statement(
     // queue to keep track of the positions
     var queue =
       scala.collection.mutable.Queue(1) // start the queue with position one
-    var position = -1
+    var position = 0
+
+    // makes everything look nicer
+    println(Console.GREEN + "Start of Anaylsis" + Console.RESET)
+    println("--------------------")
+    println("Current position: " + position)
+    println("Current intervals" + intervals.toString())
+    println("Current queue: " + queue.toString())
+
     // loop to go through queue
     while (queue.nonEmpty) {
       position = queue.dequeue()
@@ -92,14 +100,22 @@ class While_Statement(
       println("Current queue: " + queue.toString())
     }
 
-    // if position 3 is bottom, then set it to the same as 0
-    if (intervals(3).isInstanceOf[Bottom]) {
-      intervals(3) = intervals(0)
+    // if position 3 is bottom, then we try to call 3 one time to see if there is any change
+    if (position != 3 && intervals(3).isInstanceOf[Bottom]) {
+      transfers(3)()
+      println("--------------------")
+      println("Current position: " + position)
+      println("Current intervals" + intervals.toString())
+      println("Current queue: " + queue.toString())
     }
+
+    println("--------------------")
+    println(Console.GREEN + "End of Analysis" + Console.RESET)
+    println("--------------------")
 
     // return the interval at the end
     return intervals(3)
 
 }
 
-//if statement return two intrevals (true, false)
+//if statement return two intervals (false, true)
