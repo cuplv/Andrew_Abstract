@@ -1,15 +1,48 @@
-class Variable(var value: Number|MyString|Bool) extends Expression {
-  override def evaluate(): Int|String|scala.Boolean = value.evaluate()
-  override def abstract_evaluate(): Interval = Interval(Infinity(true), false, Infinity(false), false)
+case class Variable(identifier: String) extends Expression {
+  override def evaluate(state: State): Int | String | scala.Boolean | Point =
+    state.variables.get(identifier).get.evaluate(state)
+  override def abstract_evaluate(state: State): Interval | TwoDInterval =
+    state.variables.get(identifier).get.abstract_evaluate(state)
 
-  //choose not to statically type variable types
-  def update(newValue: Number|MyString|Bool): Unit = value = newValue
+  // choose not to statically type variable types
+  // assignment will be the way to update scope's intervals
 
-  override def toString: String = "Variable("+value.toString+")";
+  def assign(newValue: Expression, state: State): Unit =
+    if (state.variables.contains(identifier)) then
+      state.variables(identifier) = newValue
+      // every time a variable is updated, the state will pick up the new interval
+      state.intervals(identifier) =
+        (state.intervals(identifier), newValue.abstract_evaluate(state)) match {
+          case (o: Interval, n: Interval)         => o union n
+          case (o: TwoDInterval, n: TwoDInterval) => o union n
+          case _ =>
+            throw new Exception(
+              "Invalid interval type"
+            ) // should be impossible to reach
+        }
+    else {
+      state.variables += (identifier -> newValue)
+      state.intervals += (identifier -> newValue.abstract_evaluate(state))
+    }
+
+  def addAssign(value: Expression, state: State): Unit =
+    if (state.variables.contains(identifier)) then
+      state.variables(identifier) = Addition(state.variables(identifier), value)
+      // every time a variable is updated, the state will pick up the new interval
+      state.intervals(identifier) =
+        (state.intervals(identifier), value.abstract_evaluate(state)) match {
+          case (o: Interval, n: Interval)         => o union (o + n)
+          case (o: TwoDInterval, n: TwoDInterval) => o union (o + n)
+          case _ =>
+            throw new Exception(
+              "Invalid interval type"
+            ) // should be impossible to reach
+        }
+    else throw new Exception("Variable not intialized")
+
+  override def toString: String = "Variable(" + identifier.toString + ")";
+
 }
 
-//how to add in variables without adding in statements?
-//like how would i modify a variable in the code?
-//I could add in a state or scope that holds variables and stores them in a map with their identifiers
-
-//should the variable contain its own identifier? or would that be handled by the state
+//assignment currently can't handle holding itself, would need
+//to evalute before storing but that defeats whole purpose of abstract evaluation

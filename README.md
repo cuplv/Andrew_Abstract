@@ -10,7 +10,7 @@ Spring 2024
 
 The best way to run this project so far is with `sbt test`
 
-## Weekly Updates?
+## Weekly Updates
 
 Because why not keep a log this can show my timeline and yeah.
 
@@ -25,9 +25,26 @@ Week 2(logic branch):
 
 Week 3:
 
-- Added in simple implementation for subtraction(with `Number`s only)
-- added in abstract_evaluate nodes: these will report the interval of a given expression, for now only really functional with `Number`'s
+- Added in simple implementation for subtraction(with `Number` and `Point` only)
+- added in abstract_evaluate nodes: these will report the interval of a given expression, for now only really functional with `Number` and `Point`
 - added in `Rand`
 - started thinking about direction of project and other cases that could happen
 - thought about combination of the evaluate and abstract_evaluate
   - My thought process is same function but as its parameters its taking a bool that says if it is abstract or not, however this seems too simple
+- Added in `Multiplication` which supports `Number`x`Number` and `Point`x`Number`
+- Added in `Point` class, alongside support for abstraction(the `TwoDInterval` class)
+
+Week 4(analysis branch):
+
+- Added in `State` and functionality for it so I can track variables across multiple expression calls.
+- Added in real functionality for while loops which now can run
+- Started abstract interpretation for a loop(picking up each additional state per pass through the loop and merging them together)
+
+Week 5(analysis branch):
+
+- Learned process for simple interpretation of a loop
+- Added in simple `abstract_evaluate()` for while loops
+  - Added in `Bottom`, extension for `Int|Interval` comparisons
+  - Added in `IncrementVar` as a sublass of `Executable`
+- Created `Conditional` class to hold comparisons
+- Changed `Rand` to have a max value to create more specific ranges
