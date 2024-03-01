@@ -97,9 +97,7 @@ object Attempt2 {
   abstract trait AbstractExpression // (v: T)
 
   case class Number(v: Int) extends Expression
-
   case class AbstractNumber(v: Interval) extends AbstractExpression
-
   case class Addition[T](a: T, b: T) extends Expression with AbstractExpression
 
   def evaluate(e: Expression | AbstractExpression): Ret = e match {
@@ -115,6 +113,7 @@ object Attempt2 {
     case AbstractNumber(v) => v
     case _                 => null
   }
+
   val test = Addition[Number](Number(1), Number(1))
   val test2 = Addition[AbstractExpression](
     AbstractNumber(Interval(1, 2)),
@@ -130,9 +129,13 @@ object Thoughts {
   abstract trait StateType
   trait Concrete extends StateType
   trait Abstract extends StateType
-  class State[T <: StateType]
+  class State[
+      T <: StateType
+  ]
+  // could this just be T and that is the type that the state maps variables to?
+  // no because what about variables of different datatypes?
 
-  trait Expression
+  abstract trait Expression
   // this function takes a state, either concrete or abstract and runs it through any expression
   // lowkey may be cheating but who knows
   def evaluate[T <: StateType](e: Expression, s: State[T]): State[T] = ???

@@ -48,3 +48,7 @@ Week 5(analysis branch):
   - Added in `IncrementVar` as a sublass of `Executable`
 - Created `Conditional` class to hold comparisons
 - Changed `Rand` to have a max value to create more specific ranges
+
+Week 6(combine branch):
+
+- Worked in [dual_evaluate.worksheet.scala](src/main/scala/dual_evaluate.worksheet.sc) to try to find a awy to call the same evaluate function for any domain(concrete, abstract, etc.)
