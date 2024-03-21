@@ -432,7 +432,7 @@ class MySuite extends munit.FunSuite {
 
   // Abstract while statement tests
 
-  test("x=Rand(4);While(x<3){x+=2}") { // normal loop
+  /* test("x=Rand(4);While(x<3){x+=2}") { // normal loop
     var state = State()
     Variable("x").assign(Rand(4), state)
     var test = While_Statement(
@@ -489,7 +489,7 @@ class MySuite extends munit.FunSuite {
       Interval(0, false, 0, false) // sequivalent to bottom
 
     assertEquals(obtained, expected)
-  }
+  } */
 
   // Interval union tests
   /* test("Interval union of (1,2] and [3,4]") {
@@ -513,6 +513,7 @@ class MySuite extends munit.FunSuite {
     val expected = Interval(1, false, Infinity(false), false)
     assertEquals(obtained, expected)
   } */
+
 }
 
 //start every time with x+y<=c1, x<=c2, y<=c3

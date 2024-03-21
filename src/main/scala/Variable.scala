@@ -1,17 +1,19 @@
-case class Variable(identifier: String) extends Expression {
-  override def evaluate(state: State): Int | String | scala.Boolean | Point =
-    state.variables.get(identifier).get.evaluate(state)
-  override def abstract_evaluate(state: State): Interval | TwoDInterval =
+case class Variable[T](identifier: String) extends Expression {
+  /* override def evaluate[T <: Domain](state: State[T]): T =
+    state.variables.get(identifier).get */
+  /* override def abstract_evaluate(state: State): Interval | TwoDInterval =
     state.variables.get(identifier).get.abstract_evaluate(state)
-
+   */
   // choose not to statically type variable types
   // assignment will be the way to update scope's intervals
 
-  def assign(newValue: Expression, state: State): Unit =
+  def assign[T](using
+      evaluator: Evaluator[T]
+  )(newValue: Expression, state: State[T]): Unit =
     if (state.variables.contains(identifier)) then
-      state.variables(identifier) = newValue
+      state.variables(identifier) = newValue.evaluate[T](state)
       // every time a variable is updated, the state will pick up the new interval
-      state.intervals(identifier) =
+      /* state.intervals(identifier) =
         (state.intervals(identifier), newValue.abstract_evaluate(state)) match {
           case (o: Interval, n: Interval)         => o union n
           case (o: TwoDInterval, n: TwoDInterval) => o union n
@@ -19,30 +21,18 @@ case class Variable(identifier: String) extends Expression {
             throw new Exception(
               "Invalid interval type"
             ) // should be impossible to reach
-        }
+        } */
     else {
-      state.variables += (identifier -> newValue)
-      state.intervals += (identifier -> newValue.abstract_evaluate(state))
+      state.variables += (identifier -> newValue.evaluate[T](state))
+      // state.intervals += (identifier -> newValue.abstract_evaluate(state))
     }
 
-  def addAssign(value: Expression, state: State): Unit =
+    // TODO work on making an addAssign method that will work for all types
+  def addAssign[T <: Operable | Int](value: T, state: State[T]): Unit =
     if (state.variables.contains(identifier)) then
-      state.variables(identifier) = Addition(state.variables(identifier), value)
-      // every time a variable is updated, the state will pick up the new interval
-      state.intervals(identifier) =
-        (state.intervals(identifier), value.abstract_evaluate(state)) match {
-          case (o: Interval, n: Interval)         => o union (o + n)
-          case (o: TwoDInterval, n: TwoDInterval) => o union (o + n)
-          case _ =>
-            throw new Exception(
-              "Invalid interval type"
-            ) // should be impossible to reach
-        }
+      state.variables(identifier) =
+        (state.variables(identifier) + value).asInstanceOf[T]
     else throw new Exception("Variable not intialized")
 
   override def toString: String = "Variable(" + identifier.toString + ")";
-
 }
-
-//assignment currently can't handle holding itself, would need
-//to evalute before storing but that defeats whole purpose of abstract evaluation
