@@ -514,6 +514,74 @@ class MySuite extends munit.FunSuite {
     assertEquals(obtained, expected)
   } */
 
+  // Tests done after type class overhaul
+
+  test("1+1") {
+    val test = Addition(Number(1), Number(1))
+    println(test.toString)
+
+    // Int domain
+    var intState = State[Int]()
+    val intObtained = test.evaluate[Int](intState)
+    val intExpected = 2
+    assertEquals(intObtained, intExpected)
+
+    // Interval domain
+    var intervalState = State[Interval]()
+    val intervalObtained = test.evaluate[Interval](intervalState)
+    val intervalExpected = Interval(2, true, 2, true)
+    assertEquals(intervalObtained, intervalExpected)
+  }
+
+  test("Rand(5)") {
+    val test = Rand(5)
+    println(test.toString)
+
+    // Int domain
+    var intState = State[Int]()
+    val intObtained = test.evaluate[Int](intState)
+    val intExpected = 0 to 5
+    assert(intExpected.contains(intObtained))
+
+    // Interval domain
+    var intervalState = State[Interval]()
+    val intervalObtained = test.evaluate[Interval](intervalState)
+    val intervalExpected = Interval(0, true, 5, true)
+    assertEquals(intervalObtained, intervalExpected)
+  }
+
+  test("x=Rand(5)") {
+    val test = Variable("x")
+    println(test.toString)
+
+    // Int domain
+    var intState = State[Int]()
+    Variable("x").assign[Int](Rand(5), intState)
+    val intObtained = test.evaluate[Int](intState)
+    val intExpected = 0 to 5
+    assert(intExpected.contains(intObtained))
+
+    // Interval domain
+    var intervalState = State[Interval]()
+    Variable("x").assign[Interval](Rand(5), intervalState)
+    val intervalObtained = test.evaluate[Interval](intervalState)
+    val intervalExpected = Interval(0, true, 5, true)
+    assertEquals(intervalObtained, intervalExpected)
+  }
+
+  /* test("x=Rand(5); While(x<3)(x+=2)") {
+    def body[T <: Operable | Int](s: State[T]): State[T] =
+      Variable("x").addAssign(2, s)
+    val test =
+      While_Statement(
+        Conditional(Variable("x"), LessThan, Number(3)),
+        Executable(body)
+      )
+
+    // Int domain
+
+    // Interval domain
+  } */
 }
 
 //start every time with x+y<=c1, x<=c2, y<=c3

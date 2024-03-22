@@ -2,7 +2,7 @@ import java.util.concurrent.locks.Condition
 class While_Statement(
     cond: Conditional,
     body: Executable
-) extends Expression {
+) extends Statement {
   /* override def evaluate[T <: Domain](state: State[T]): T = {
     var num = 0
     while (cond.evaluate[T](state).asInstanceOf[Boolean]) {
@@ -19,7 +19,7 @@ class While_Statement(
 
   // TODO: change this to invterval analysis through evaluate
   // This is where the actual beef of abstract evaluation will have to live
-  def abstract_evaluate(state: State[Interval]): Interval =
+  /* def abstract_evaluate(state: State[Interval]): Interval =
     // this maps each position to the next possible ones
     val topologicalMap = Map(
       0 -> List(1),
@@ -121,11 +121,13 @@ class While_Statement(
 
     // return the interval at the end
     return intervals(3)
+   */
 
   def evalConditional[T](using evaluator: Evaluator[T])(state: State[T]): T =
     evaluator.evaluate(cond, state)
-  def execBody[T](using evaluator: Evaluator[T])(state: State[T]): T =
-    evaluator.evaluate(body, state)
+  def execBody[T](using evaluator: Evaluator[T])(state: State[T]): State[T] =
+    evaluator.execute(body, state)
+  def getCond(): Conditional = cond
 }
 
 //if statement return two intervals (false, true)

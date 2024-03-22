@@ -1,9 +1,4 @@
-class Executable(body: State[_] => Unit) extends Expression {
-  override def evaluate[T](using
-      evaluator: Evaluator[T]
-  )(state: State[T]): T =
-    body(state)
-    null.asInstanceOf[T]
+case class Executable(body: State[_] => State[_]) extends Statement {
 
   // return 0;
   /* override def abstract_evaluate(state: State[]): Interval =

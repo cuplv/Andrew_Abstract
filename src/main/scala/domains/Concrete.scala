@@ -34,8 +34,6 @@ import scala.util.Random
   def rand(max: Int): Domain = Concrete(Random.nextInt(max))
   override def toString(): String = "Int" */
 
-case class Concrete(value: Int) extends Domain;
-
 implicit object IntEvaluator extends Evaluator[Int] {
   def evaluate(expr: Expression, state: State[Int]): Int = expr match {
     case Addition(left, right, sub) =>
@@ -56,21 +54,19 @@ implicit object IntEvaluator extends Evaluator[Int] {
         }
       then 1
       else 0
-    case stmt: While_Statement => {
-      var num = 0
-
-      while (stmt.evalConditional[Int](state) == 1) {
-        stmt.execBody[Int](state)
-        num += 1
-      }
-      num
-    }
     case Variable(identifier) => state.variables(identifier)
-    case exec: Executable => { // This case is theoretically unreachable
-      exec.evaluate[Int](state)
-      0
+    case _                    => null.asInstanceOf[Int]
+  }
+
+  def execute(stmt: Statement, state: State[Int]): State[Int] = stmt match {
+    case Executable(body) => body(state).asInstanceOf[State[Int]]
+    case stmt: While_Statement => {
+      while (stmt.evalConditional[Int](state) != 0) {
+        stmt.execBody[Int](state)
+      }
+      state
     }
-    case _ => null.asInstanceOf[Int]
+    case _ => null
   }
 }
 

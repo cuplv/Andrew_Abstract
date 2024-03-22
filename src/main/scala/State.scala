@@ -1,5 +1,8 @@
-class State[T <: Domain]():
+class State[T]():
   var variables = collection.mutable.Map[String, T]()
+  def isEmpty(): Boolean = variables.isEmpty
+
+  override def clone(): State[T] = this.clone()
 
   // var intervals = collection.mutable.Map[String, Interval | TwoDInterval]()
 

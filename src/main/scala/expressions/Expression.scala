@@ -1,16 +1,3 @@
-//The idea is that every domain will have its own implementation of whatever operators/expression types
-//that way to add new domains, you just add it as a domain and implement the operators, no need to mess with the expressions
-/* trait Domain:
-  def +(other: Domain): Domain
-  def -(other: Domain): Domain
-  def *(other: Domain): Domain
-  def rand(max: Int): Domain
-  def <(other: Domain): Domain
-  def >(other: Domain): Domain
- */
-
-trait Domain;
-
 trait Operable:
   def +(other: Operable): Operable
   def -(other: Operable): Operable
@@ -18,6 +5,7 @@ trait Operable:
 
 trait Evaluator[T] {
   def evaluate(expr: Expression, state: State[T]): T
+  def execute(stmt: Statement, state: State[T]): State[T]
 }
 trait Expression:
   def evaluate[T](using evaluator: Evaluator[T])(state: State[T]): T =

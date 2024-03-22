@@ -28,11 +28,12 @@ case class Variable[T](identifier: String) extends Expression {
     }
 
     // TODO work on making an addAssign method that will work for all types
-  def addAssign[T <: Operable | Int](value: T, state: State[T]): Unit =
+  def addAssign[T <: Operable | Int](value: T, state: State[T]): State[T] =
     if (state.variables.contains(identifier)) then
       state.variables(identifier) =
         (state.variables(identifier) + value).asInstanceOf[T]
     else throw new Exception("Variable not intialized")
+    return state
 
   override def toString: String = "Variable(" + identifier.toString + ")";
 }

@@ -21,7 +21,7 @@ case class Conditional(a: Expression, comp: ComparisonOperator, b: Expression)
 
   // given an interval for the variable in the conditional, returns the (false, true) intervals
   def splitInterval(interval: Interval): (Interval, Interval) = {
-    val bval = b.evaluate(State[Int]()).asInstanceOf[Int]
+    val bval = b.evaluate[Int](State[Int]())
     comp match {
       case LessThan =>
         if (interval.high <= bval) {

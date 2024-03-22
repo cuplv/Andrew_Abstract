@@ -58,3 +58,4 @@ Week 7 and 8(combine branch):
 - Researched Types and Classes, polymorphism(ad hoc and parametric), and Type Classes.
 - Started trying to implement a version of `evaluate` thats approximates the following: `evaluate[T]` => `T`, or in words you can pass the domain type to the evalute function, and each domain will implement each type of expression in its own way.
 - Changed to have a type class instead of `Evaluator[T]`, where each T would be a domain like `Int`, `Interval`, etc. All evaluates were outsourced to the `implicit object` of each domain type like `IntEvaluator` or `IntervalEvaluator`.
+- Added the `Statement` trait which is for anything that changes state (while loops, executables, etc.). to evaluate a `Statement` you call `Statement.execute[T]`, whihc returns `State[T]`

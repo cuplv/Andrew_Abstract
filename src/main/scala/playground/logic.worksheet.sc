@@ -1,5 +1,5 @@
-import org.scalacheck.Properties
-import org.scalacheck.Prop.forAll
+// import org.scalacheck.Properties
+// import org.scalacheck.Prop.forAll
 
 /* object LogicalStatementSpec extends Properties("LogicalStatement") {
   property("checkLogicalStatement") = forAll { (x: Int, y: Int) =>
