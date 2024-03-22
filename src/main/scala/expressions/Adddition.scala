@@ -1,23 +1,15 @@
-class Addition(var a: Expression, var b: Expression, val sub: Boolean = false)
+case class Addition(a: Expression, b: Expression, sub: Boolean = false)
     extends Expression:
-  override def evaluate(state: State): Int | String | scala.Boolean | Point =
+  /* override def evaluate[T <: Domain](state: State[T]): T =
 
-    if (a.isInstanceOf[Point] && b.isInstanceOf[Point]) {
-      if (sub) then
-        return (a.asInstanceOf[Point] - b.asInstanceOf[Point]).evaluate(state)
-      else
-        return (a.asInstanceOf[Point] + b.asInstanceOf[Point]).evaluate(state)
-    }
-    val aval = a.evaluate(state)
-    val bval = b.evaluate(state)
+    val aval = a.evaluate[T](state)
+    val bval = b.evaluate[T](state)
 
     (aval, bval, sub) match {
-      case (a: Int, b: Int, false)     => a + b
-      case (a: Int, b: Int, true)      => a - b
-      case (a: String, b: String, _)   => a + b
-      case (a: Boolean, b: Boolean, _) => a || b
-      case (a: Point, b: Point, true)  => (a - b).evaluate(state)
-      case (a: Point, b: Point, false) => (a + b).evaluate(state)
+      case (a: T, b: T, false) => (a + b).asInstanceOf[T]
+      case (a: T, b: T, true)  => (a - b).asInstanceOf[T]
+      // case (a: String, b: String, _)   => a + b
+      // case (a: Boolean, b: Boolean, _) => a || b
       case _ =>
         throw new Exception(
           "Cannot add " + a.toString() + " and " + b.toString()
@@ -38,9 +30,9 @@ class Addition(var a: Expression, var b: Expression, val sub: Boolean = false)
         "Cannot add " + aval.toString() + " and " + bval.toString()
       ) */
 
-  end evaluate
+  end evaluate */
 
-  override def abstract_evaluate(state: State): Interval | TwoDInterval =
+  /* override def abstract_evaluate(state: State): Interval | TwoDInterval =
     val aval = a.abstract_evaluate(state)
     val bval = b.abstract_evaluate(state)
     (aval, bval) match {
@@ -51,7 +43,7 @@ class Addition(var a: Expression, var b: Expression, val sub: Boolean = false)
           "Cannot add " + aval.toString() + " and " + bval.toString()
         )
     }
-
+   */
   override def toString: String = {
     "Addition(" + a.toString() + ", " + b.toString() + (if !sub then ")"
                                                         else

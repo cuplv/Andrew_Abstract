@@ -48,3 +48,14 @@ Week 5(analysis branch):
   - Added in `IncrementVar` as a sublass of `Executable`
 - Created `Conditional` class to hold comparisons
 - Changed `Rand` to have a max value to create more specific ranges
+
+Week 6(combine branch):
+
+- Worked in [dual_evaluate.worksheet.scala](src/main/scala/dual_evaluate.worksheet.sc) to try to find a awy to call the same evaluate function for any domain(concrete, abstract, etc.)
+
+Week 7 and 8(combine branch):
+
+- Researched Types and Classes, polymorphism(ad hoc and parametric), and Type Classes.
+- Started trying to implement a version of `evaluate` thats approximates the following: `evaluate[T]` => `T`, or in words you can pass the domain type to the evalute function, and each domain will implement each type of expression in its own way. In theory you would be able to call `.evaluate[Domain]` on any expression for whichever domain you wanted at the time.
+- Changed to have a type class instead of `Evaluator[T]`, where each T would be a domain like `Int`, `Interval`, etc. All evaluates were outsourced to the `implicit object` of each domain type like `IntEvaluator` or `IntervalEvaluator`.
+- Added the `Statement` trait which is for anything that changes state (while loops, executables, etc.). to evaluate a `Statement` you call `Statement.execute[T]`, which returns `State[T]`
